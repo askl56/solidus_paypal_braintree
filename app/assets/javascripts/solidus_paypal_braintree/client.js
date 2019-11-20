@@ -55,6 +55,7 @@ SolidusPaypalBraintree.Client = function(config) {
   this.paymentMethodId = config.paymentMethodId;
   this.readyCallback = config.readyCallback;
   this.useDataCollector = config.useDataCollector;
+  this.useKount = config.useKount;
   this.usePaypal = config.usePaypal;
   this.useApplepay = config.useApplepay;
   this.useThreeDSecure = config.useThreeDSecure;
@@ -79,6 +80,10 @@ SolidusPaypalBraintree.Client.prototype.initialize = function() {
 
   if (this.usePaypal) {
     initializationPromise = initializationPromise.then(this._createPaypal.bind(this));
+  }
+
+  if (this.useKount) {
+    initializationPromise = initializationPromise.then(this._createKount.bind(this));
   }
 
   if (this.useApplepay) {
@@ -171,6 +176,27 @@ SolidusPaypalBraintree.Client.prototype._createDataCollector = function() {
     this._dataCollectorInstance = dataCollectorInstance;
     return dataCollectorInstance;
   }.bind(this));
+};
+
+SolidusPaypalBraintree.Client.prototype._createKount = function() {
+  return SolidusPaypalBraintree.PromiseShim.convertBraintreePromise(braintree.dataCollector.create, [{
+    client: this._braintreeInstance,
+    kount: true
+  }]).then(function (dataCollectorInstance) {
+    var form = document.getElementById('checkout_form_payment');
+    var deviceDataInput = form['device_data'];
+
+    if (deviceDataInput == null) {
+      deviceDataInput = document.createElement('input');
+      deviceDataInput.name = 'device_data';
+      deviceDataInput.type = 'hidden';
+      form.appendChild(deviceDataInput);
+    }
+    deviceDataInput.value = dataCollectorInstance.deviceData;
+
+  }.bind(this), function(error) {
+    console.error(error.name + ':', error.message);
+  });
 };
 
 SolidusPaypalBraintree.Client.prototype._createPaypal = function() {
