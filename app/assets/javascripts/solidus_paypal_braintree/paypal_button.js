@@ -59,6 +59,8 @@ SolidusPaypalBraintree.PaypalButton.prototype._tokenizeCallback = function(token
     return;
   }
 
+  $('.a-button--checkout').attr('disabled','disabled');
+  $('.a-button--checkout').css("opacity", "0.3");
 
   var params = this._transactionParams(payload);
 
@@ -69,8 +71,6 @@ SolidusPaypalBraintree.PaypalButton.prototype._tokenizeCallback = function(token
     data: params,
     success: function(response) {
       
-      $('.a-button--checkout').attr('disabled','disabled');
-      $('.a-button--checkout').css("opacity", "0.3");
       window.location.href = response.redirectUrl;
     },
     error: function(xhr) {
