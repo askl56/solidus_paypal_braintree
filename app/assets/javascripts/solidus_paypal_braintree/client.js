@@ -173,24 +173,26 @@ SolidusPaypalBraintree.Client.prototype._createDataCollector = function() {
 };
 
 SolidusPaypalBraintree.Client.prototype._createKount = function() {
-  return SolidusPaypalBraintree.PromiseShim.convertBraintreePromise(braintree.dataCollector.create, [{
-    client: this._braintreeInstance,
-    kount: true
-  }]).then(function (dataCollectorInstance) {
-    var form = document.getElementById('checkout_form_payment');
-    var deviceDataInput = form['device_data'];
+  if (typeof(braintree.dataCollector) != 'undefined') {
+    return SolidusPaypalBraintree.PromiseShim.convertBraintreePromise(braintree.dataCollector.create, [{
+      client: this._braintreeInstance,
+      kount: true
+    }]).then(function (dataCollectorInstance) {
+      var form = document.getElementById('checkout_form_payment');
+      var deviceDataInput = form['device_data'];
 
-    if (deviceDataInput == null) {
-      deviceDataInput = document.createElement('input');
-      deviceDataInput.name = 'device_data';
-      deviceDataInput.type = 'hidden';
-      form.appendChild(deviceDataInput);
-    }
-    deviceDataInput.value = dataCollectorInstance.deviceData;
+      if (deviceDataInput == null) {
+        deviceDataInput = document.createElement('input');
+        deviceDataInput.name = 'device_data';
+        deviceDataInput.type = 'hidden';
+        form.appendChild(deviceDataInput);
+      }
+      deviceDataInput.value = dataCollectorInstance.deviceData;
 
-  }.bind(this), function(error) {
-    console.error(error.name + ':', error.message);
-  });
+    }.bind(this), function(error) {
+      console.error(error.name + ':', error.message);
+    });
+  }
 };
 
 SolidusPaypalBraintree.Client.prototype._createPaypal = function() {
