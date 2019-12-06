@@ -179,11 +179,11 @@ SolidusPaypalBraintree.Client.prototype._createKount = function() {
       kount: true
     }]).then(function (dataCollectorInstance) {
       var form = document.getElementById('checkout_form_payment');
-      var deviceDataInput = form['device_data'];
+      var deviceDataInput = form['order[payments_attributes][][braintree_device_data]'];
 
       if (deviceDataInput == null) {
         deviceDataInput = document.createElement('input');
-        deviceDataInput.name = 'device_data';
+        deviceDataInput.name = 'order[payments_attributes][][braintree_device_data]';
         deviceDataInput.type = 'hidden';
         form.appendChild(deviceDataInput);
       }
